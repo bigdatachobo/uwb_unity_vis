@@ -22,7 +22,7 @@ const uint8_t PIN_IRQ = 22;
 
 
 const char * ssid = "ASUS_A1_2.4GHz";
-const char * password = "six_dragon_flying_666";
+const char * password = "password";
 const char * udpAddress = "192.168.0.2"; //My UDP Server IP
 const int udpPort = 8080;
 
