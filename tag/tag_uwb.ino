@@ -8,23 +8,33 @@
 
 #include <SPI.h>
 #include "DW1000Ranging.h"
+#include "DW1000.h"
 #include "WiFi.h"
 #include <WiFiUdp.h>
 
+#define SPI_SCK 18
+#define SPI_MISO 19
+#define SPI_MOSI 23
+#define DW_CS 4
+ 
 // connection pins
-const uint8_t PIN_CLK = 18;
-const uint8_t PIN_MOSI = 23;
-const uint8_t PIN_MISO = 19;
-const uint8_t PIN_CSN = 15;
-const uint8_t PIN_RST = 2;
-const uint8_t PIN_IRQ = 22;
+const uint8_t PIN_RST = 27; // reset pin
+const uint8_t PIN_IRQ = 34; // irq pin
+const uint8_t PIN_SS = 4;   // spi select pin
+
+// connection pins
+//const uint8_t PIN_CLK = 18;
+//const uint8_t PIN_MOSI = 23;
+//const uint8_t PIN_MISO = 19;
+//const uint8_t PIN_CSN = 15;
+//const uint8_t PIN_RST = 2;
+//const uint8_t PIN_IRQ = 22;
 
 
-
-const char * ssid = "ASUS_A1_2.4GHz";
-const char * password = "password";
+const char * ssid = "cat6";
+const char * password = "pi3141592";
 const char * udpAddress = "192.168.0.2"; //My UDP Server IP
-const int udpPort = 8080;
+const int udpPort = 3000;
 
 boolean connected = false;
 WiFiUDP udp;
@@ -32,9 +42,9 @@ WiFiUDP udp;
 void setup() {
   Serial.begin(115200);
   delay(1000);
-  SPI.begin(PIN_CLK, PIN_MISO, PIN_MOSI);
+  SPI.begin(SPI_SCK, SPI_MISO, SPI_MOSI);
   //init the configuration
-  DW1000Ranging.initCommunication(PIN_RST, PIN_CSN, PIN_IRQ); //Reset, CS, IRQ pin
+  DW1000Ranging.initCommunication(PIN_RST, PIN_SS, PIN_IRQ); //Reset, CS, IRQ pin
   //define the sketch as anchor. It will be great to dynamically change the type of module
   DW1000Ranging.attachNewRange(newRange);
   DW1000Ranging.attachNewDevice(newDevice);
@@ -47,7 +57,7 @@ void setup() {
   DW1000.setGPIOMode(MSGP3, LED_MODE);
 
   //we start the module as a tag
-  DW1000Ranging.startAsTag("7D:00:22:EA:82:60:3B:9C", DW1000.MODE_LONGDATA_RANGE_LOWPOWER);
+  DW1000Ranging.startAsTag("7D:00:22:EA:82:60:3B:9C", DW1000.MODE_LONGDATA_RANGE_LOWPOWER, false);
 
   connectToWiFi(ssid, password);
 }
@@ -57,6 +67,16 @@ void loop() {
 }
 
 void newRange() {
+
+  Serial.print("from: ");
+  Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress(), HEX);
+  Serial.print("\t Range: ");
+  Serial.print(DW1000Ranging.getDistantDevice()->getRange());
+  Serial.print(" m");
+  Serial.print("\t RX power: ");
+  Serial.print(DW1000Ranging.getDistantDevice()->getRXPower());
+  Serial.print(" dBm ");
+    
   float projectedRange = DW1000Ranging.getDistantDevice()->getRange() * 2 / 5;
   String strData = String(DW1000Ranging.getDistantDevice()->getShortAddress(), HEX);
   strData += ", ";
@@ -68,6 +88,7 @@ void newRange() {
     udp.write((uint8_t *)strData.c_str(), strlen(strData.c_str()));
     udp.endPacket();
   }
+
 }
 
 void newDevice(DW1000Device* device) {
