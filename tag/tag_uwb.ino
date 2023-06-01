@@ -31,8 +31,12 @@ const uint8_t PIN_SS = 4;   // spi select pin
 //const uint8_t PIN_IRQ = 22;
 
 
-const char * ssid = "cat6";
-const char * password = "pi3141592";
+//const char * ssid = "cat6";
+//const char * password = "password";
+
+const char * ssid = "ASUS_A1_2.4GHz";
+const char * password = "password";
+
 const char * udpAddress = "192.168.0.2"; //My UDP Server IP
 const int udpPort = 3000;
 
