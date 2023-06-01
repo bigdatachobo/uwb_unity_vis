@@ -1,4 +1,6 @@
 /*
+https://chat.openai.com/share/6bcc5325-786d-4166-a2f9-7d3c13c5537e
+
 Arduino에서 사용할 수 있는 MQTT 라이브러리 중 하나인 "PubSubClient"는 Arduino용 MQTT 통신 라이브러리입니다. 
 
 이 라이브러리를 사용하면 Arduino 보드를 MQTT 클라이언트로 사용하여 MQTT 프로토콜을 통해 메시지를 발행하고 구독할 수 있습니다.
