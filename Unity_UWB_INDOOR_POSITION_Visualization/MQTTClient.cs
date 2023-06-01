@@ -47,6 +47,8 @@ public class MqttClientHandler : MonoBehaviour
 }
 
 /*
+https://chat.openai.com/share/6bcc5325-786d-4166-a2f9-7d3c13c5537e
+
 M2Mqtt 라이브러리를 Unity에서 사용하려면 다음 단계를 따르시면 됩니다:
 
 NuGet 패키지 매니저를 사용해서 M2Mqtt 패키지를 다운로드 받습니다. 이는 Windows 환경에서 .NET 프로젝트를 위한 패키지 매니저입니다.
