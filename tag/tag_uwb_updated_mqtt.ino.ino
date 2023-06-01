@@ -13,10 +13,10 @@ const uint8_t PIN_RST = 27;
 const uint8_t PIN_IRQ = 34; 
 const uint8_t PIN_SS = 4;   
 
-const char * ssid = "ASUS_A1_2.4GHz";
-const char * password = "six_dragon_flying_666";
+const char * ssid = "ssid";
+const char * password = "password";
 
-const char* mqttServer = "192.168.50.233";
+const char* mqttServer = "broker ip";
 const int mqttPort = 1883;
 
 WiFiClient espClient;
