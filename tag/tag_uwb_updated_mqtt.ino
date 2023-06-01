@@ -1,3 +1,18 @@
+/*
+Arduino에서 사용할 수 있는 MQTT 라이브러리 중 하나인 "PubSubClient"는 Arduino용 MQTT 통신 라이브러리입니다. 
+
+이 라이브러리를 사용하면 Arduino 보드를 MQTT 클라이언트로 사용하여 MQTT 프로토콜을 통해 메시지를 발행하고 구독할 수 있습니다.
+
+라이브러리를 설치하기 위해 Arduino IDE를 열고, 상단 메뉴의 
+'스케치' > '라이브러리 포함하기' > '라이브러리 관리'를 클릭합니다. 
+라이브러리 관리 창이 열리면, 검색창에 "PubSubClient"를 입력하면 해당 라이브러리를 찾을 수 있습니다.
+
+PubSubClient 라이브러리는 Nick O'Leary가 만든 라이브러리이며, Github에서도 확인할 수 있습니다:
+https://github.com/knolleary/pubsubclient
+
+아두이노에서는 이와 같이 각종 센서와 액추에이터를 연결하여 IoT 장치를 쉽게 개발할 수 있습니다.
+*/
+
 #include <SPI.h>
 #include "DW1000Ranging.h"
 #include "DW1000.h"
