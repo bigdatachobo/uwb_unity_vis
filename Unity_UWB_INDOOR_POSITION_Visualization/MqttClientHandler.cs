@@ -4,34 +4,44 @@ using TMPro;
 using UnityEngine;
 using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
+// using static UnityMainThreadDispatcher;
 
 public class MqttClientHandler : MonoBehaviour
-{
-    [SerializeField] string brokerIpAddress = "192.168.50.233"; // MQTT broker pc ip
-    [SerializeField] int brokerPort = 1883;
+{   
+    // [SerializeField] unity 에디터 inspector 화면상에서 입력한 데이터를 사용하기 위해선
+    // 변수만 선언하는게 좋다.
+    // 값을 배정하게되면 {brokerIpAddress + ":" + brokerPort} 변수값끼리 합쳐서 "client = new MqttClient(brokerIpAddress);" 여기에 전달해버린다.
+    [SerializeField] string brokerIpAddress; // MQTT broker pc ip 
+    [SerializeField] ushort brokerPort;
     [SerializeField] string topic = "uwb/range";
     [SerializeField] TextMeshProUGUI mLogText;
 
     private MqttClient client;
 
+    private DataHandler dataHandler;
+    string receivedMessage;
+    bool messageReceived = false;
+
     void Start()
     {
-        client = new MqttClient(brokerIpAddress + ":" + brokerPort);
+        client = new MqttClient(brokerIpAddress);
         client.MqttMsgPublishReceived += client_MqttMsgPublishReceived;
         string clientId = Guid.NewGuid().ToString();
-        client.Connect(clientId);
+        client.Connect(clientId, "", "", false, brokerPort);
         client.Subscribe(new string[] { topic }, new byte[] { MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE });
 
         LogAdd("Connected to MQTT broker at " + brokerIpAddress + ":" + brokerPort);
         LogAdd("Subscribed to topic: " + topic);
+
+        dataHandler = FindObjectOfType<DataHandler>();
     }
 
-    void client_MqttMsgPublishReceived(object sender, MqttMsgPublishEventArgs e)
-    {
-        string receivedMessage = Encoding.UTF8.GetString(e.Message);
-        LogAdd("Received: " + receivedMessage, true);
-        FindObjectOfType<DataHandler>().setData(receivedMessage);
-    }
+    // void client_MqttMsgPublishReceived(object sender, MqttMsgPublishEventArgs e)
+    // {
+    //     string receivedMessage = Encoding.UTF8.GetString(e.Message);
+    //     LogAdd("Received: " + receivedMessage, true);
+    //     FindObjectOfType<DataHandler>().setData(receivedMessage);
+    // }
 
     void LogAdd(string t, bool isData = false)
     {
@@ -44,6 +54,33 @@ public class MqttClientHandler : MonoBehaviour
             mLogText.text += "\n" + t;
         }
     }
+
+    // void client_MqttMsgPublishReceived(object sender, MqttMsgPublishEventArgs e)
+    // {
+    //     string receivedMessage = Encoding.UTF8.GetString(e.Message);
+    //     UnityMainThreadDispatcher.Instance().Enqueue(() =>
+    //     {
+    //         LogAdd("Received: " + receivedMessage, true);
+    //     });
+    //     FindObjectOfType<DataHandler>().setData(receivedMessage);
+    // }
+
+    void client_MqttMsgPublishReceived(object sender, MqttMsgPublishEventArgs e)
+    {
+        receivedMessage = Encoding.UTF8.GetString(e.Message);
+        messageReceived = true;
+    }
+
+    void Update()
+    {
+        if (messageReceived && dataHandler != null)
+        {
+            LogAdd("Received: " + receivedMessage, true);
+            dataHandler.setData(receivedMessage);
+            messageReceived = false;
+        }
+    }
+
 }
 
 /*
